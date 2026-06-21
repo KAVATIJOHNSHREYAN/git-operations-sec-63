@@ -182,8 +182,16 @@ export default function Home() {
   const [isLoginView, setIsLoginView] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [authLoading, setAuthLoading] = useState(false);
+
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('saved_login_email');
+    const savedPassword = localStorage.getItem('saved_login_password');
+    if (savedEmail) setEmail(savedEmail);
+    if (savedPassword) setPassword(savedPassword);
+  }, []);
 
   // Settings modal states
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -700,8 +708,9 @@ export default function Home() {
         const data = await apiService.register(email, password);
         setAuth(data.access_token, { email, subscription_status: 'free' });
       }
-      setEmail('');
-      setPassword('');
+      localStorage.setItem('saved_login_email', email);
+      localStorage.setItem('saved_login_password', password);
+      // We do not reset the email and password here so they stay saved in state for next time if needed.
       setActiveScreen('chat');
     } catch (err: any) {
       setAuthError(err.message || 'Authentication operation failed.');
@@ -914,14 +923,14 @@ export default function Home() {
                       }`}
                     />
                   </div>
-                  <div>
+                  <div className="relative">
                     <label htmlFor="password" className={`block text-[10px] uppercase font-bold mb-1.5 ${
                       isHacker ? 'text-emerald-600 font-mono' : isDark ? 'text-slate-350' : 'text-slate-700'
                     }`}>
                       Password
                     </label>
                     <input
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       name="password"
                       id="password"
                       autoComplete={isLoginView ? "current-password" : "new-password"}
@@ -929,7 +938,7 @@ export default function Home() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
-                      className={`w-full px-4 py-2.5 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-violet-500 transition-all border ${
+                      className={`w-full px-4 py-2.5 pr-10 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-violet-500 transition-all border ${
                         isHacker
                           ? 'bg-black border-emerald-500/30 text-emerald-400 placeholder-emerald-900 focus:ring-emerald-500 font-mono'
                           : isDark 
@@ -937,6 +946,15 @@ export default function Home() {
                             : 'bg-slate-50 border-slate-300 text-slate-900 placeholder-slate-500'
                       }`}
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className={`absolute right-3 top-8 transition-colors ${
+                        isHacker ? 'text-emerald-600 hover:text-emerald-400' : isDark ? 'text-slate-400 hover:text-slate-200' : 'text-slate-500 hover:text-slate-700'
+                      }`}
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
                   </div>
                   <button
                     type="submit"

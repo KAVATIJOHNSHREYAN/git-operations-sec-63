@@ -482,18 +482,18 @@ export default function Home() {
     }
   }, [token]);
 
-  const loadChats = async () => {
+  async function loadChats() {
     if (!token) return;
     setIsLoadingChats(true);
     try {
-      const data = await apiService.getChats(token!);
+      const data = await apiService.getChats();
       setChats(data);
     } catch (err) {
-      console.error(err);
+      console.error('Failed to load chats', err);
     } finally {
       setIsLoadingChats(false);
     }
-  };
+  }
 
   // Initialize Voice Assistant hooks
   const {
@@ -1409,6 +1409,8 @@ export default function Home() {
 
                     {/* Premium Starter Cards */}
                     <div className="w-full">
+                      <h3 className="text-xl font-bold mb-4">Welcome to SAMRAT AI</h3>
+                      <p className="text-gray-300">This is your intelligent companion. Feel free to explore its capabilities.</p>
                       <h3 className={`text-[10px] font-bold uppercase tracking-widest text-center mb-4 ${
                         isHacker ? 'text-emerald-600 font-mono' : isDark ? 'text-slate-550' : 'text-slate-450'
                       }`}>

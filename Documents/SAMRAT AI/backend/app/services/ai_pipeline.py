@@ -129,7 +129,7 @@ async def generate_response_stream(
             )
 
             # FORCE MODEL FIX
-            selected_model = "models/gemini-2.5-flash"
+            selected_model = "models/gemini-1.5-flash"
 
             print("Using Gemini Model:", selected_model)
 

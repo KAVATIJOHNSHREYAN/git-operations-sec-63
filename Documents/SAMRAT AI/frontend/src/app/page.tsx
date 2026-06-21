@@ -486,7 +486,7 @@ export default function Home() {
     if (!token) return;
     setIsLoadingChats(true);
     try {
-      const data = await apiService.getChats();
+      const data = await apiService.getChats(token!);
       setChats(data);
     } catch (err) {
       console.error('Failed to load chats', err);
